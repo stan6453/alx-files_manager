@@ -34,9 +34,9 @@ class DBClient {
     return this.isConnected;
   }
 
-  async nbUsers() {
+  async nbUsers(query={}) {
     try {
-      return await this.db.collection('users').countDocuments();
+      return await this.db.collection('users').countDocuments(query);
     }
     catch (error) {
       console.log(error)
@@ -46,6 +46,15 @@ class DBClient {
   async nbFiles() {
     try {
       return await this.db.collection('files').countDocuments();
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  async addNewUser(user) {
+    try {
+    return await this.db.collection('users').insertOne(user);;
     }
     catch (error) {
       console.log(error)
