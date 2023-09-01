@@ -2,10 +2,10 @@ import { MongoClient } from "mongodb";
 import { env } from 'process';
 
 class DBClient {
-  constructor() {
-    this.host = env.DB_HOST || '127.0.0.1';
-    this.port = env.DB_PORT || 27017;
-    this.database = env.DB_DATABASE || 'files_manager';
+  constructor(host = '127.0.0.1', port = 27017, database = 'files_manager') {
+    this.host = host;
+    this.port = port;
+    this.database = database;
     this.url = `mongodb://${this.host}:${this.port}`;
     this.isConnected = false;
 
@@ -53,4 +53,4 @@ class DBClient {
   }
 }
 
-export default new DBClient();
+export default new DBClient(env.DB_HOST, env.DB_PORT, env.DB_DATABASE);
