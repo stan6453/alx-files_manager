@@ -3,9 +3,10 @@ import { promisify } from 'util';
 
 class RedisClient {
   constructor() {
+    this.isConnected = false;
     this.client = redis.createClient();
-    this.getAsync = promisify(this.client.get).bind(this.client);
     this.isConnected = true;
+    this.getAsync = promisify(this.client.get).bind(this.client);
 
     this.client.on("error", function (err) {
       this.isConnected = false;
@@ -19,7 +20,7 @@ class RedisClient {
   }
 
   isAlive() {
-    return this.isConnected
+    return this.isConnected;
   }
 
   async get(key) {
@@ -27,12 +28,12 @@ class RedisClient {
   }
 
   async set(key, value, durationInSeconds) {
-    this.client.set(key, value, 'EX', durationInSeconds)
+    this.client.set(key, value, 'EX', durationInSeconds);
   }
 
   async del(key) {
-    this.client.del(key)
+    this.client.del(key);
   }
 }
 
-export default new RedisClient()
+export default new RedisClient();
