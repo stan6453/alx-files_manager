@@ -2,7 +2,7 @@ import { env } from 'process';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { v4 as getUniqueId } from 'uuid';
 import mongoClient from '../utils/db';
-import { base64DecodeFile } from '../utils/FileUtils';
+import { base64DecodeFile, processFileDocument } from '../utils/FileUtils';
 
 async function postUpload(req, res) {
   const acceptedFileTypes = ['folder', 'file', 'image'];
@@ -37,11 +37,27 @@ async function postUpload(req, res) {
   }
 
   const result = await mongoClient.addNewFile(fileMetadata);
-  const createdFile = result.ops[0];
-  createdFile.id = createdFile._id;
-  delete createdFile._id;
-  delete createdFile.localPath;
+
+  // Return some info about the created file to user
+  const createdFile = processFileDocument(result.ops[0]);
   return res.status(201).json(createdFile);
 }
 
-export default { postUpload };
+async function getShow(req, res) {
+  const { id: fileId } = req.params;
+  const { _id: userId } = req.appUser;
+  let file = await mongoClient.getFile({ _id: fileId, userId });
+  if (!file) return res.status(404).json({ error: 'Not found' });
+  file = processFileDocument(file);
+  return res.json(file);
+}
+
+async function getIndex(req, res) {
+  const { parentId = 0, page = 0 } = req.query;
+  const { _id: userId } = req.appUser;
+  const mongodbQuery = { parentId, userId };
+  const files = await mongoClient.getFileWithPagination(mongodbQuery, page, 20);
+  return res.status(200).json(files);
+}
+
+export default { postUpload, getShow, getIndex };

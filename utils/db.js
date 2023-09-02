@@ -78,6 +78,20 @@ class DBClient {
     return undefined;
   }
 
+  async getFileWithPagination(query, pageNumber, pageSize) {
+    const skip = pageNumber * pageSize;
+    try {
+      return await this.db.collection('files').aggregate([
+        { $match: query },
+        { $skip: skip },
+        { $limit: pageSize },
+      ]).toArray();
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
   async addNewFile(file) {
     try {
       return await this.db.collection('files').insertOne(file);
