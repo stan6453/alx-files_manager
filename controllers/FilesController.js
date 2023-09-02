@@ -58,8 +58,8 @@ async function getIndex(req, res) {
   const mongodbQuery = { parentId, userId };
   const files = await mongoClient.getFileWithPagination(mongodbQuery, page, 20);
   const processedFiles = [];
-  for (const file in files) {
-    processedFiles.push(processFileDocument(file))
+  for (const file of files) {
+    processedFiles.push(processFileDocument(file));
   }
   return res.status(200).json(processedFiles);
 }
