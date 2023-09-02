@@ -46,7 +46,7 @@ async function postUpload(req, res) {
 async function getShow(req, res) {
   const { id: fileId } = req.params;
   const { _id: userId } = req.appUser;
-  let file = await mongoClient.getFile({ _id: fileId, userId });
+  let file = await mongoClient.getFile({ _id: mongoClient.ObjectId(fileId), userId });
   if (!file) return res.status(404).json({ error: 'Not found' });
   file = processFileDocument(file);
   return res.json(file);
@@ -61,7 +61,7 @@ async function getIndex(req, res) {
   for (const file of files) {
     processedFiles.push(processFileDocument(file));
   }
-  return res.status(200).json(processedFiles);
+  return res.json(processedFiles);
 }
 
 export default { postUpload, getShow, getIndex };

@@ -4,9 +4,9 @@ export function base64DecodeFile(base64String) {
 
 export function processFileDocument(fileDocument) {
   const fileDocumentCopy = { ...fileDocument };
+  if (fileDocumentCopy.type !== 'folder') delete fileDocumentCopy.localPath;
   fileDocumentCopy.id = fileDocumentCopy._id;
   delete fileDocumentCopy._id;
-  delete fileDocumentCopy.localPath;
   return fileDocumentCopy;
 }
 
