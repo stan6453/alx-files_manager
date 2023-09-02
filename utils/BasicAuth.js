@@ -27,3 +27,10 @@ export function deleteCurrentSession(req) {
   const sessionId = req.headers['x-token'];
   redisClient.del(`auth_${sessionId}`);
 }
+
+export async function authenticateUser(req, res, next){
+  const user = await userFromSessionId(req);
+  if (!user) return res.status(401).json({error:'Unauthorized'});
+  req.appUser = user;
+  next();
+}

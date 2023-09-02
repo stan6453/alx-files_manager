@@ -42,15 +42,6 @@ class DBClient {
     return undefined;
   }
 
-  async nbFiles() {
-    try {
-      return await this.db.collection('files').countDocuments();
-    } catch (error) {
-      console.log(error);
-    }
-    return undefined;
-  }
-
   async addNewUser(user) {
     try {
       return await this.db.collection('users').insertOne(user);
@@ -68,6 +59,26 @@ class DBClient {
     }
     return undefined;
   }
+
+  async nbFiles() {
+    try {
+      return await this.db.collection('files').countDocuments();
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
+  async getFile(query) {
+    try {
+      return await this.db.collection('files').findOne(query);
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
+
 }
 
 export default new DBClient(env.DB_HOST, env.DB_PORT, env.DB_DATABASE);
