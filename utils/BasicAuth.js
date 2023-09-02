@@ -28,9 +28,9 @@ export function deleteCurrentSession(req) {
   redisClient.del(`auth_${sessionId}`);
 }
 
-export async function authenticateUser(req, res, next){
+export async function authenticateUser(req, res, next) {
   const user = await userFromSessionId(req);
-  if (!user) return res.status(401).json({error:'Unauthorized'});
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
   req.appUser = user;
-  next();
+  return next();
 }

@@ -4,9 +4,11 @@ import { v4 as getUniqueId } from 'uuid';
 import mongoClient from '../utils/db';
 import { base64DecodeFile } from '../utils/FileUtils';
 
-export async function postUpload(req, res) {
+async function postUpload(req, res) {
   const acceptedFileTypes = ['folder', 'file', 'image'];
-  const { name, type, parentId = 0, isPublic = false, data = null } = req.body;
+  const {
+    name, type, parentId = 0, isPublic = false, data = null,
+  } = req.body;
 
   if (!name) return res.status(400).json({ error: 'Missing name' });
   if (!type || !acceptedFileTypes.includes(type)) return res.status(400).json({ error: 'Missing type' });
@@ -29,8 +31,8 @@ export async function postUpload(req, res) {
   if (type !== 'folder') {
     const storageDirectory = env.FOLDER_PATH || '/tmp/files_manager';
     if (!existsSync(storageDirectory)) mkdirSync(storageDirectory);
-    fileMetadata.localPath = storageDirectory + '/' + getUniqueId();
-    const buffer = base64DecodeFile(data)
+    fileMetadata.localPath = `${storageDirectory}/${getUniqueId()}`;
+    const buffer = base64DecodeFile(data);
     writeFileSync(fileMetadata.localPath, buffer);
   }
 
@@ -40,7 +42,6 @@ export async function postUpload(req, res) {
   delete createdFile._id;
   delete createdFile.localPath;
   return res.status(201).json(createdFile);
-
 }
 
 export default { postUpload };

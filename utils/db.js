@@ -86,8 +86,6 @@ class DBClient {
     }
     return undefined;
   }
-
-
 }
 
 export default new DBClient(env.DB_HOST, env.DB_PORT, env.DB_DATABASE);
