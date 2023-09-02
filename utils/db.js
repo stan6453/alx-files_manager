@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient } from 'mongodb';
 import { env } from 'process';
 
 class DBClient {
@@ -22,43 +22,41 @@ class DBClient {
         this.client.on('reconnect', () => {
           this.isConnected = true;
         });
-
       })
       .catch((err) => {
         console.log('could not connect to MongoDB: ', err);
       });
-
   }
 
   isAlive() {
     return this.isConnected;
   }
 
-  async nbUsers(query={}) {
+  async nbUsers(query = {}) {
     try {
       return await this.db.collection('users').countDocuments(query);
+    } catch (error) {
+      console.log(error);
     }
-    catch (error) {
-      console.log(error)
-    }
+    return undefined;
   }
 
   async nbFiles() {
     try {
       return await this.db.collection('files').countDocuments();
+    } catch (error) {
+      console.log(error);
     }
-    catch (error) {
-      console.log(error)
-    }
+    return undefined;
   }
 
   async addNewUser(user) {
     try {
-    return await this.db.collection('users').insertOne(user);;
+      return await this.db.collection('users').insertOne(user);
+    } catch (error) {
+      console.log(error);
     }
-    catch (error) {
-      console.log(error)
-    }
+    return undefined;
   }
 }
 

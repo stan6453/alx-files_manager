@@ -8,15 +8,14 @@ class RedisClient {
     this.isConnected = true;
     this.getAsync = promisify(this.client.get).bind(this.client);
 
-    this.client.on("error", function (err) {
+    this.client.on('error', (err) => {
       this.isConnected = false;
       console.log(err);
     });
 
-    this.client.on('connected', function () {
+    this.client.on('connected', () => {
       this.isConnected = true;
     });
-
   }
 
   isAlive() {
@@ -24,7 +23,7 @@ class RedisClient {
   }
 
   async get(key) {
-    return await this.getAsync(key);
+    return this.getAsync(key);
   }
 
   async set(key, value, durationInSeconds) {

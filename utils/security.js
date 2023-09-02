@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 function sha1HashPassword(plaintextPassword) {
   const sha1 = crypto.createHash('sha1');
