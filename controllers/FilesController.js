@@ -57,7 +57,11 @@ async function getIndex(req, res) {
   const { _id: userId } = req.appUser;
   const mongodbQuery = { parentId, userId };
   const files = await mongoClient.getFileWithPagination(mongodbQuery, page, 20);
-  return res.status(200).json(files);
+  const processedFiles = [];
+  for (const file in files){
+    processedFiles.push(processFileDocument(file))
+  }
+  return res.status(200).json(processedFiles);
 }
 
 export default { postUpload, getShow, getIndex };
