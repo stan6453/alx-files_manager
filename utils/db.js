@@ -78,6 +78,15 @@ class DBClient {
     return undefined;
   }
 
+  async addNewFile(file) {
+    try {
+      return await this.db.collection('files').insertOne(file);
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
 
 }
 
