@@ -55,7 +55,7 @@ async function getShow(req, res) {
 async function getIndex(req, res) {
   const { parentId = 0, page } = req.query;
   const { _id: userId } = req.appUser;
-  const mongodbQuery = { parentId, userId };
+  const mongodbQuery = { parentId };
   const files = await mongoClient.getFileWithPagination(mongodbQuery, page, 20);
   const processedFiles = [];
   for (const file of files) {
