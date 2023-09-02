@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { env } from 'process';
 
 class DBClient {
@@ -8,6 +8,7 @@ class DBClient {
     this.database = database;
     this.url = `mongodb://${this.host}:${this.port}`;
     this.isConnected = false;
+    this.ObjectId = ObjectId;
 
     this.client = new MongoClient(this.url);
     this.client.connect()
@@ -53,6 +54,15 @@ class DBClient {
   async addNewUser(user) {
     try {
       return await this.db.collection('users').insertOne(user);
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
+  async getUser(query) {
+    try {
+      return await this.db.collection('users').findOne(query);
     } catch (error) {
       console.log(error);
     }

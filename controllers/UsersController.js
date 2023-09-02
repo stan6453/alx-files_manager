@@ -1,5 +1,6 @@
 import mongoClient from '../utils/db';
 import { sha1HashPassword } from '../utils/security';
+import { userFromSessionId } from '../utils/BasicAuth';
 
 async function postNew(req, res) {
   const { email, password } = req.body;
@@ -15,4 +16,9 @@ async function postNew(req, res) {
   return res.status(201).json({ email, id: result.insertedId });
 }
 
-export default { postNew };
+async function getMe(req, res) {
+  const user = await userFromSessionId(req);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  return res.status(200).json({ email: user.email, id: user._id });
+}
+export default { postNew, getMe };

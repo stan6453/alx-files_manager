@@ -5,3 +5,5 @@ export function sha1HashPassword(plaintextPassword) {
   sha1.update(plaintextPassword, 'utf8');
   return sha1.digest('hex');
 }
+
+export default { sha1HashPassword };
