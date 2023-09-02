@@ -83,12 +83,14 @@ class DBClient {
 
     let aggregation = [
       { $match: query },
+      { $sort: { _id: -1 } },
       { $skip: skip },
       { $limit: pageSize },
     ]
     if (pageNumber === undefined || pageNumber === null) {
       aggregation = [
-        { $match: query }
+        { $match: query },
+        { $sort: { _id: -1 } },
       ]
     }
 
