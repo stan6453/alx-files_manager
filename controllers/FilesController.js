@@ -53,14 +53,15 @@ async function getShow(req, res) {
 }
 
 async function getIndex(req, res) {
-  const { parentId = 0, page=0 } = req.query;
+  const { parentId = 0, page = 0 } = req.query;
+  const { _id: userId } = req.body;
 
   if (parentId !== 0) {
     const parentFolder = await mongoClient.getFile({ _id: mongoClient.ObjectId(parentId) });
     if (!parentFolder || parentFolder.type !== 'folder') return res.status(200).json([]);
   }
 
-  const mongodbQuery = { parentId };
+  const mongodbQuery = { userId };
   const files = await mongoClient.getFilesWithPagination(mongodbQuery, page, 20);
   const processedFiles = [];
   for (const file of files) {
