@@ -81,20 +81,12 @@ class DBClient {
   async getFilesWithPagination(query, pageNumber, pageSize) {
     const skip = pageNumber * pageSize;
 
-    let aggregation = [
-      { $match: query },
-      { $skip: skip },
-      { $limit: pageSize },
-    ];
-
-    if (pageNumber === undefined) {
-      aggregation = [
-        { $match: query },
-      ];
-    }
-
     try {
-      return await this.db.collection('files').aggregate(aggregation).toArray();
+      return await this.db.collection('files').aggregate([
+        { $match: query },
+        { $skip: skip },
+        { $limit: pageSize },
+      ]).toArray();
     } catch (error) {
       console.log(error);
     }
