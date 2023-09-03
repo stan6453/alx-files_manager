@@ -53,7 +53,7 @@ async function getShow(req, res) {
 }
 
 async function getIndex(req, res) {
-  const { parentId = 0, page } = req.query;
+  const { parentId = 0, page=0 } = req.query;
 
   if (parentId !== 0) {
     const parentFolder = await mongoClient.getFile({ _id: mongoClient.ObjectId(parentId) });
