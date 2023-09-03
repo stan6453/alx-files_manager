@@ -101,6 +101,15 @@ class DBClient {
     }
     return undefined;
   }
+
+  async replaceFile(filter, replacement) {
+    try {
+      return await this.db.collection('files').replaceOne(filter, replacement);
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
 }
 
 export default new DBClient(env.DB_HOST, env.DB_PORT, env.DB_DATABASE);

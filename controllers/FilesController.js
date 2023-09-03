@@ -73,4 +73,32 @@ async function getIndex(req, res) {
   return res.status(200).json(processedFiles);
 }
 
-export default { postUpload, getShow, getIndex };
+async function putPublish(req, res) {
+  const { id: fileId } = req.params;
+  const { _id: userId } = req.appUser;
+  const filter = { _id: mongoClient.ObjectId(fileId), userId };
+
+  const fileDocument = await mongoClient.getFile(filter);
+  if (!fileDocument) return res.status(404).json({ error: 'Not found' });
+
+  fileDocument.isPublic = true;
+  await mongoClient.replaceFile(filter, fileDocument);
+  return res.status(200).json(fileDocument);
+}
+
+async function putUnpublish(req, res) {
+  const { id: fileId } = req.params;
+  const { _id: userId } = req.appUser;
+  const filter = { _id: mongoClient.ObjectId(fileId), userId };
+
+  const fileDocument = await mongoClient.getFile(filter);
+  if (!fileDocument) return res.status(404).json({ error: 'Not found' });
+
+  fileDocument.isPublic = false;
+  await mongoClient.replaceFile(filter, fileDocument);
+  return res.status(200).json(fileDocument);
+}
+
+export default {
+  postUpload, getShow, getIndex, putPublish, putUnpublish,
+};
