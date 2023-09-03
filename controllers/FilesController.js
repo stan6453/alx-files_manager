@@ -53,7 +53,7 @@ async function getShow(req, res) {
 }
 
 async function getIndex(req, res) {
-  const { parentId = 0, page = 0 } = req.query;
+  const { parentId = 0, page = undefined } = req.query;
   const { _id: userId } = req.appUser;
 
   let mongodbQuery = { userId };
