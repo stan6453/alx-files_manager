@@ -57,7 +57,7 @@ async function getIndex(req, res) {
 
   if (parentId !== 0) {
     const parentFolder = await mongoClient.getFile({ _id: mongoClient.ObjectId(parentId) });
-    if (!parentFolder || parentFolder.type !== 'folder') return [];
+    if (!parentFolder || parentFolder.type !== 'folder') return res.status(200).json([]);
   }
 
   const mongodbQuery = { parentId };
