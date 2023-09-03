@@ -84,7 +84,7 @@ class DBClient {
     try {
       return await this.db.collection('files').aggregate([
         { $match: query },
-        { $skip: skip },
+        { $skip: skip - 1 },
         { $limit: pageSize + 1 },
       ]).toArray();
     } catch (error) {
