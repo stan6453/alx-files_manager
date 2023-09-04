@@ -1,12 +1,10 @@
 import { env } from 'process';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import Queue from 'bull';
 import { v4 as getUniqueId } from 'uuid';
 import mime from 'mime-types';
 import mongoClient from '../utils/db';
 import { base64DecodeFile, processFileDocument } from '../utils/FileUtils';
 
-const fileQueue = new Queue('fileQueue', 'redis://127.0.0.1:6379');
 async function postUpload(req, res) {
   const acceptedFileTypes = ['folder', 'file', 'image'];
   const {
@@ -118,5 +116,5 @@ async function getFile(req, res) {
 }
 
 export default {
-  postUpload, getShow, getIndex, putPublish, putUnpublish, fileQueue, getFile,
+  postUpload, getShow, getIndex, putPublish, putUnpublish, getFile,
 };
