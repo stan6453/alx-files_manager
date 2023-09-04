@@ -6,7 +6,7 @@ const app = express();
 const port = env.PORT || 5000;
 
 // Parse JSON request bodies
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.use('/', router);
 

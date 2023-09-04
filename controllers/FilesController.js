@@ -4,6 +4,7 @@ import { v4 as getUniqueId } from 'uuid';
 import mime from 'mime-types';
 import mongoClient from '../utils/db';
 import { base64DecodeFile, processFileDocument } from '../utils/FileUtils';
+import { addImageToFileQueue } from '../workers';
 
 async function postUpload(req, res) {
   const acceptedFileTypes = ['folder', 'file', 'image'];
@@ -38,6 +39,8 @@ async function postUpload(req, res) {
   }
 
   const result = await mongoClient.addNewFile(fileMetadata);
+
+  if (fileMetadata.type === 'image') addImageToFileQueue({ userId: req.appUser._id, fileId: result.ops[0]._id });
 
   // Return some info about the created file to user
   const createdFile = processFileDocument(result.ops[0]);
@@ -102,6 +105,7 @@ async function putUnpublish(req, res) {
 
 async function getFile(req, res) {
   const { id: fileId } = req.params;
+  const { size } = req.query;
   let userId;
   if (req.appUser) userId = req.appUser._id;
 
@@ -109,11 +113,16 @@ async function getFile(req, res) {
 
   if (!fileDocument || (fileDocument && !fileDocument.isPublic && !fileDocument.userId.equals(userId))) return res.status(404).json({ error: 'Not found' });
   if (fileDocument.type === 'folder') return res.status(400).json({ error: 'A folder doesn\'t have content' });
-  if (!existsSync(fileDocument.localPath)) return res.status(404).json({ error: 'Not found' });
+
+  let absoluteFilePath = fileDocument.localPath;
+
+  if (size && fileDocument.type === 'image') absoluteFilePath = `${absoluteFilePath}_${size}`;
+
+  if (!existsSync(absoluteFilePath)) return res.status(404).json({ error: 'Not found' });
 
   const contentType = mime.contentType(fileDocument.name);
   res.set('Content-Type', contentType);
-  return res.status(200).sendFile(fileDocument.localPath);
+  return res.status(200).sendFile(absoluteFilePath);
 }
 
 export default {

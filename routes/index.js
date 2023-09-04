@@ -7,7 +7,7 @@ import FilesController from '../controllers/FilesController';
 
 const router = express.Router();
 
-// Protect the endpoints below
+// Public endpoints
 router.use(softAuthenticateUser);
 
 router.get('/status', AppController.getStatus);
@@ -21,7 +21,7 @@ router.get('/disconnect', AuthController.getDisconnect);
 
 router.get('/files/:id/data', FilesController.getFile);
 
-// Protect the endpoints below
+// Protect endpoints
 router.use(authenticateUser);
 
 router.post('/files', FilesController.postUpload);

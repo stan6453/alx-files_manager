@@ -69,15 +69,6 @@ class DBClient {
     return undefined;
   }
 
-  async allFiles() {
-    try {
-      return await this.db.collection('files');
-    } catch (error) {
-      console.log(error);
-    }
-    return undefined;
-  }
-
   async getFile(query) {
     try {
       return await this.db.collection('files').findOne(query);

@@ -8,6 +8,8 @@ export async function authenticateUser(req, res, next) {
 }
 
 export async function softAuthenticateUser(req, res, next) {
+  // get information on user with credentials,
+  // while still allowing users without credentials access.
   const user = await userFromSessionId(req);
   if (user) {
     req.appUser = user;
