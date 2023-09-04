@@ -6,8 +6,6 @@ import mime from 'mime-types';
 import mongoClient from '../utils/db';
 import { base64DecodeFile, processFileDocument } from '../utils/FileUtils';
 
-const fs = require('fs');
-
 const fileQueue = new Queue('fileQueue', 'redis://127.0.0.1:6379');
 async function postUpload(req, res) {
   const acceptedFileTypes = ['folder', 'file', 'image'];
@@ -112,10 +110,11 @@ async function getFile(req, res) {
 
   if (!fileDocument || (fileDocument && !fileDocument.isPublic && !fileDocument.userId.equals(userId))) return res.status(404).json({ error: 'Not found' });
   if (fileDocument.type === 'folder') return res.status(400).json({ error: 'A folder doesn\'t have content' });
-  if (!fs.existsSync(fileDocument.localPath)) return res.status(404).json({ error: 'Not found' });
+  if (!existsSync(fileDocument.localPath)) return res.status(404).json({ error: 'Not found' });
 
   const contentType = mime.contentType(fileDocument.name);
-  return res.set('Content-Type', contentType).status(200).sendFile(fileDocument.localPath);
+  res.set('Content-Type', contentType);
+  return res.status(200).sendFile(fileDocument.localPath);
 }
 
 export default {
