@@ -43,7 +43,6 @@ fileQueue.process(async (job, done) => {
   done();
 });
 
-
 const userQueue = new Queue('userQueue', 'redis://127.0.0.1:6379');
 
 export function addUserToUserQueue(job) {
@@ -54,9 +53,10 @@ userQueue.process(async (job, done) => {
   const { userId } = job.data;
 
   if (!userId) throw new Error('Missing userId');
-  const newUser =  mongoClient.getUser({_id : mongoClient.ObjectId(userId)});
+  const newUser = mongoClient.getUser({ _id: mongoClient.ObjectId(userId) });
   if (!newUser) throw new Error('User not found');
   console.log('Welcome <email>!');
+  done();
 });
 
 export default { addImageToFileQueue, addUserToUserQueue };
