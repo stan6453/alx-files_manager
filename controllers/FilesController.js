@@ -110,12 +110,10 @@ async function getFile(req, res) {
   if (req.appUser) userId = req.appUser._id;
 
   const fileDocument = await mongoClient.getFile({ _id: mongoClient.ObjectId(fileId) });
-
   if (!fileDocument || (fileDocument && !fileDocument.isPublic && !fileDocument.userId.equals(userId))) return res.status(404).json({ error: 'Not found' });
   if (fileDocument.type === 'folder') return res.status(400).json({ error: 'A folder doesn\'t have content' });
 
   let absoluteFilePath = fileDocument.localPath;
-
   if (size && fileDocument.type === 'image') absoluteFilePath = `${absoluteFilePath}_${size}`;
 
   if (!existsSync(absoluteFilePath)) return res.status(404).json({ error: 'Not found' });
