@@ -1,9 +1,14 @@
 import { env } from 'process';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import Queue from 'bull';
 import { v4 as getUniqueId } from 'uuid';
+import mime from 'mime-types';
 import mongoClient from '../utils/db';
 import { base64DecodeFile, processFileDocument } from '../utils/FileUtils';
 
+const fs = require('fs');
+
+const fileQueue = new Queue('fileQueue', 'redis://127.0.0.1:6379');
 async function postUpload(req, res) {
   const acceptedFileTypes = ['folder', 'file', 'image'];
   const {
@@ -73,4 +78,43 @@ async function getIndex(req, res) {
   return res.status(200).json(processedFiles);
 }
 
-export default { postUpload, getShow, getIndex };
+async function getFile(req, res) {
+  const files = await mongoClient.allFiles();
+  const { id, size } = req.params;
+  const fileId = await mongoClient.ObjectId(id);
+  const file = await files.findOne({ _id: fileId });
+  if (!file) {
+    res.status(404).json({ error: 'Not found' });
+    return;
+  }
+  if (file.type === 'folder') {
+    res.status(400).json({ error: 'A folder doesn\'t have content' });
+    return;
+  }
+
+  let filePath = file.localPath;
+  if (size) {
+    filePath = `${file.localPath}_${size}`;
+  }
+
+  let present;
+
+  fs.access(filePath, fs.F_OK, (err) => {
+    if (err) {
+      present = false;
+      res.status(404).json({ error: 'Not found' });
+    } else {
+      present = true;
+    }
+  });
+  if (present) {
+    const contentType = mime.contentType(file.name);
+    res.header('Content-Type', contentType).status(200).sendFile(filePath);
+    return;
+  }
+  res.status(404).json({ error: 'Not found' });
+}
+
+export default {
+  postUpload, getShow, getIndex, fileQueue, getFile,
+};

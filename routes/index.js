@@ -23,5 +23,6 @@ router.post('/files', FilesController.postUpload);
 
 router.get('/files', FilesController.getIndex);
 router.get('/files/:id', FilesController.getShow);
+router.get('/files/:id/data', FilesController.getFile);
 
 export default router;

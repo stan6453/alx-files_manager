@@ -42,6 +42,15 @@ class DBClient {
     return undefined;
   }
 
+  async allUsers() {
+    try {
+      return await this.db.collection('users');
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
   async addNewUser(user) {
     try {
       return await this.db.collection('users').insertOne(user);
@@ -63,6 +72,15 @@ class DBClient {
   async nbFiles() {
     try {
       return await this.db.collection('files').countDocuments();
+    } catch (error) {
+      console.log(error);
+    }
+    return undefined;
+  }
+
+  async allFiles() {
+    try {
+      return await this.db.collection('files');
     } catch (error) {
       console.log(error);
     }
