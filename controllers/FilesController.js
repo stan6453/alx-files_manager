@@ -105,40 +105,17 @@ async function putUnpublish(req, res) {
 }
 
 async function getFile(req, res) {
-  const files = await mongoClient.allFiles();
-  const { id, size } = req.params;
-  const fileId = await mongoClient.ObjectId(id);
-  const file = await files.findOne({ _id: fileId });
-  if (!file) {
-    res.status(404).json({ error: 'Not found' });
-    return;
-  }
-  if (file.type === 'folder') {
-    res.status(400).json({ error: 'A folder doesn\'t have content' });
-    return;
-  }
+  const { id: fileId } = req.params;
+  const { _id: userId } = req.appUser;
 
-  let filePath = file.localPath;
-  if (size) {
-    filePath = `${file.localPath}_${size}`;
-  }
+  const fileDocument = await mongoClient.getFile({ _id: mongoClient.ObjectId(fileId) });
 
-  let present;
+  if (!fileDocument || (fileDocument && !fileDocument.isPublic && !fileDocument.userId.equals(userId))) return res.status(404).json({ error: 'Not found' });
+  if (fileDocument.type === 'folder') return res.status(400).json({ error: 'A folder doesn\'t have content' });
+  if (!fs.existsSync(fileDocument.localPath)) return res.status(404).json({ error: 'Not found' });
 
-  fs.access(filePath, fs.F_OK, (err) => {
-    if (err) {
-      present = false;
-      res.status(404).json({ error: 'Not found' });
-    } else {
-      present = true;
-    }
-  });
-  if (present) {
-    const contentType = mime.contentType(file.name);
-    res.header('Content-Type', contentType).status(200).sendFile(filePath);
-    return;
-  }
-  res.status(404).json({ error: 'Not found' });
+  const contentType = mime.contentType(fileDocument.name);
+  return res.set('Content-Type', contentType).status(200).sendFile(fileDocument.localPath);
 }
 
 export default {
