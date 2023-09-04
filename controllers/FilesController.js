@@ -102,7 +102,8 @@ async function putUnpublish(req, res) {
 
 async function getFile(req, res) {
   const { id: fileId } = req.params;
-  const userId = req?.appUser?._id;
+  let userId;
+  if (req.appUser) userId = req.appUser._id;
 
   const fileDocument = await mongoClient.getFile({ _id: mongoClient.ObjectId(fileId) });
 
