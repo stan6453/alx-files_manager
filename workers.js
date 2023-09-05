@@ -45,7 +45,7 @@ fileQueue.process(async (job, done) => {
 
 const userQueue = new Queue('userQueue', 'redis://127.0.0.1:6379');
 
-export function addUserToUserQueue(job) {
+export function addNewUserToUserQueue(job) {
   userQueue.add(job);
 }
 
@@ -59,4 +59,4 @@ userQueue.process(async (job, done) => {
   done();
 });
 
-export default { addImageToFileQueue, addUserToUserQueue };
+export default { addImageToFileQueue, addNewUserToUserQueue };

@@ -1,7 +1,7 @@
 import mongoClient from '../utils/db';
 import { sha1HashPassword } from '../utils/security';
 import { userFromSessionId } from '../utils/BasicAuth';
-import { addUserToUserQueue } from '../workers';
+import { addNewUserToUserQueue } from '../workers';
 
 async function postNew(req, res) {
   const { email, password } = req.body;
@@ -14,7 +14,7 @@ async function postNew(req, res) {
   const newUser = { email, password: hashedPassword };
 
   const result = await mongoClient.addNewUser(newUser);
-  addUserToUserQueue({ userId: result.insertedId });
+  addNewUserToUserQueue({ userId: result.insertedId });
   return res.status(201).json({ email, id: result.insertedId });
 }
 
