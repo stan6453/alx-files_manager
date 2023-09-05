@@ -11,3 +11,5 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/', router);
 
 app.listen(port);
+
+export default app;
